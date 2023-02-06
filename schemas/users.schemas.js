@@ -17,7 +17,7 @@ const createUserSchema = Joi.object({
   password: password.required(),
   nickname: nickname,
   email: email.required(),
-  role: role.required()
+  role: role
 });
 
 const addMovieSchema = Joi.object({

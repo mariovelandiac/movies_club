@@ -223,4 +223,6 @@ docker-compose.yml
 # Windows shortcuts
 *.lnk
 
+# examples of classes
+examples
 # End of https://www.toptal.com/developers/gitignore/api/node,windows,linux,macos
