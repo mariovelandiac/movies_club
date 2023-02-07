@@ -1,21 +1,37 @@
+// Vínculo con la aplicación
 const express = require("express");
 const router = express.Router();
-const CustomersService = require('../services/customers.services');
-const service = new CustomersService();
+
+// Capa de Autenticación
+const passport = require('passport');
+const {checkRole} = require('./../middlewares/auth.handler');
+
+//Validación de datos de ingreso
 const validatorHandler = require("../middlewares/validator.handler")
 const {createCustomerSchema, updateCustomerSchema,getCustomerSchema}
  = require("../schemas/customer.schemas");
 
+// Servicios
+const CustomersService = require('../services/customers.services');
+const service = new CustomersService();
 
-// ruta para endpoint de actores
 
-router.get('/', async (req, res) => {
+
+// RUTAS
+
+router.get('/',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
+  async (req, res) => {
   const customer = await service.find();
   res.json(customer);
-})
+  }
+);
 
 // ruta para endpoint de actor/actriz en partícular
 router.get('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin','customer'),
   validatorHandler(getCustomerSchema,'params'),
   async (req, res, next) => {
     try {
@@ -45,6 +61,8 @@ router.post('/:id', async (req, res) => {
 })
 
 router.patch('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('customer'),
   validatorHandler(getCustomerSchema, 'params'),
   validatorHandler(updateCustomerSchema, 'body'),
   async (req, res, next) => {
@@ -59,6 +77,8 @@ router.patch('/:id',
 });
 
 router.delete('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin', 'customer'),
   validatorHandler(getCustomerSchema, 'params'),
   async (req, res,next) => {
     try {

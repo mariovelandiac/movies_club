@@ -1,13 +1,22 @@
+// Vínculo con la aplicación
 const express = require("express");
 const router = express.Router();
-const ActorsService = require('../services/actors.services');
-const service = new ActorsService();
+
+// Capa de Autenticación
+const passport = require('passport');
+const {checkRole} = require('./../middlewares/auth.handler');
+
+// Capa validación de formato de datos
 const validatorHandler = require("../middlewares/validator.handler")
 const {createActorSchema, updateActorSchema,getActorSchema}
  = require("../schemas/actors.schemas");
-const {querySchema} = require('./../schemas/actors.schemas')
+const {querySchema} = require('./../schemas/actors.schemas');
 
-// ruta para endpoint de actores
+// Servicios
+const ActorsService = require('../services/actors.services');
+const service = new ActorsService();
+
+// RUTAS
 
 router.get('/',
   validatorHandler(querySchema, 'query'),
@@ -31,6 +40,8 @@ router.get('/:id',
 
 
 router.post('/',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(createActorSchema, 'body'),
   async (req, res, next) => {
     try {
@@ -47,6 +58,8 @@ router.post('/:id', async (req, res) => {
 })
 
 router.patch('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(getActorSchema, 'params'),
   validatorHandler(updateActorSchema, 'body'),
   async (req, res, next) => {
@@ -61,6 +74,8 @@ router.patch('/:id',
 });
 
 router.delete('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(getActorSchema, 'params'),
   async (req, res,next) => {
     try {

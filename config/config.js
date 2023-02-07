@@ -6,7 +6,7 @@ const config = {
   port: process.env.PORT,
   dbURL: process.env.DATABASE_URL,
   apiKey: process.env.API_KEY,
-  secret: process.env.SECRET
+  jwtsecret: process.env.JWT_SECRET
 }
 
 module.exports = {config}

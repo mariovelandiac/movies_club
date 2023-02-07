@@ -29,6 +29,11 @@ class CustomersService {
       include: ['user']
       }
     );
+    // delete customers.dataValues.user.dataValues.password
+    customers.forEach((customer)=>{
+      delete customer.dataValues.user.dataValues.password
+      return
+    })
     return customers
   }
 

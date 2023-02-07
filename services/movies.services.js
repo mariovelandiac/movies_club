@@ -62,6 +62,13 @@ class MoviesServices {
     return movie
   };
 
+  async findByUser(userId) {
+    const movies = await models.Movie.findAll({
+      '$user_movie.userId$': userId
+    })
+    return movies
+  }
+
   async update(id, changes) {
     const movie = await this.findeOne(id);
     const rta = await movie.update(changes);

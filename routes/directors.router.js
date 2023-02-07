@@ -1,12 +1,22 @@
+// Vínculo con la aplicación
 const express = require("express");
 const router = express.Router();
-const DirectorsServices = require("../services/directors.services")
-const service = new DirectorsServices();
+
+// Capa de Autenticación
+const passport = require('passport');
+const {checkRole} = require('./../middlewares/auth.handler');
+
+// Capa de validación de formato de entrada
 const validatorHandler = require("../middlewares/validator.handler")
 const {createDirectorSchema, updateDirectorSchema,getDirectorSchema}
  = require("../schemas/directors.schemas");
-// ruta para endpoint de Directores
 
+//Servicios
+const DirectorsServices = require("../services/directors.services")
+const service = new DirectorsServices();
+
+
+// ruta para endpoint de Directores
 router.get('/', async (req,res) => {
   const directors = await service.find();
   res.json(directors);
@@ -27,6 +37,8 @@ router.get('/:id',
 })
 
 router.post('/',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(createDirectorSchema, 'body'),
   async (req, res, next) => {
     try {
@@ -43,6 +55,8 @@ router.post('/:id', async (req, res) => {
 })
 
 router.patch('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(getDirectorSchema, 'params'),
   validatorHandler(updateDirectorSchema, 'body'),
   async (req, res, next) => {
@@ -57,6 +71,8 @@ router.patch('/:id',
 })
 
 router.delete('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(getDirectorSchema, 'params'),
   async (req, res, next) => {
     try {

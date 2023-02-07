@@ -1,14 +1,22 @@
+// Vínculo con la aplicación
 const express = require("express");
 const router = express.Router();
-const GenreService = require('../services/genre.services');
-const service = new GenreService();
+
+// Capa de Autenticación
+const passport = require('passport');
+const {checkRole} = require('./../middlewares/auth.handler');
+
+// Capa de Validación de datos de entrada
 const validatorHandler = require("../middlewares/validator.handler")
 const {createGenreSchema, updateGenreSchema,getGenreSchema}
  = require("../schemas/genre.schemas");
 
+// Servicios
+const GenreService = require('../services/genre.services');
+const service = new GenreService();
 
-// ruta para endpoint de GenreSs
 
+// ruta para endpoint de Genres
 router.get('/', async (req, res) => {
   const genre = await service.find();
   res.json(genre);
@@ -29,6 +37,8 @@ router.get('/:id',
 
 
 router.post('/',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(createGenreSchema, 'body'),
   async (req, res, next) => {
     try {
@@ -45,6 +55,8 @@ router.post('/:id', async (req, res) => {
 })
 
 router.patch('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(getGenreSchema, 'params'),
   validatorHandler(updateGenreSchema, 'body'),
   async (req, res, next) => {
@@ -59,6 +71,8 @@ router.patch('/:id',
 });
 
 router.delete('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(getGenreSchema, 'params'),
   async (req, res,next) => {
     try {

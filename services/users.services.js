@@ -29,6 +29,9 @@ class UsersService {
     const users = await models.User.findAll({
       include: ['customer']
     });
+    users.forEach((user) => {
+      delete user.dataValues.password
+    })
     return users;
   }
 

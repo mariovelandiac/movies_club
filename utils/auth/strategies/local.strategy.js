@@ -13,7 +13,7 @@ const LocalStrategy = new Strategy({
       const user = await service.findByEmail(email);
       // validación de existencia
       if (!user) {
-        done(boom.unauthorized(), false);
+        done(boom.notFound(), false);
       }
       // validación de correspondencia
       const isMatch = await bcrypt.compare(password, user.password);

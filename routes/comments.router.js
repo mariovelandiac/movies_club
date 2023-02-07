@@ -1,21 +1,35 @@
+// Vínculo con la aplicación
 const express = require("express");
 const router = express.Router();
+
+// Capa de Autenticación
+const passport = require('passport');
+const {checkRole} = require('./../middlewares/auth.handler');
+
+// Capa validación de formato de datos
+const validatorHandler = require("../middlewares/validator.handler")
+const {createCommentSchema, updateCommentSchema,getCommentSchema}= require("../schemas/comments.schemas");
+
+ // Servicios
 const CommentsService = require('../services/comments.services');
 const service = new CommentsService();
-const validatorHandler = require("../middlewares/validator.handler")
-const {createCommentSchema, updateCommentSchema,getCommentSchema}
- = require("../schemas/comments.schemas");
 
 
+// RUTAS
 // ruta para endpoint de actores
 
-router.get('/', async (req, res) => {
+router.get('/',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
+  async (req, res) => {
   const comment = await service.find();
   res.json(comment);
-})
+  })
 
 // ruta para endpoint de actor/actriz en partícular
 router.get('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin', 'customer'),
   validatorHandler(getCommentSchema,'params'),
   async (req, res, next) => {
     try {
@@ -29,6 +43,8 @@ router.get('/:id',
 
 
 router.post('/',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin','customer'),
   validatorHandler(createCommentSchema, 'body'),
   async (req, res, next) => {
     try {
@@ -45,6 +61,8 @@ router.post('/:id', async (req, res) => {
 })
 
 router.patch('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin', 'customer'),
   validatorHandler(getCommentSchema, 'params'),
   validatorHandler(updateCommentSchema, 'body'),
   async (req, res, next) => {
@@ -59,6 +77,8 @@ router.patch('/:id',
 });
 
 router.delete('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin', 'customer'),
   validatorHandler(getCommentSchema, 'params'),
   async (req, res,next) => {
     try {

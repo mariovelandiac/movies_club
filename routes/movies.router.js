@@ -1,14 +1,23 @@
+// Vínculo con la aplicación
 const express = require("express");
 const router = express.Router();
-const MoviesServices = require("../services/movies.services");
-const service = new MoviesServices();
+
+// Capa de Autenticación
+const passport = require('passport');
+const {checkRole} = require('./../middlewares/auth.handler');
+
+// Capa de validación de datos de entrada
 const validatorHandler = require("../middlewares/validator.handler");
 const {createMovieSchema, updateMovieSchema,getMovieSchema, addActorSchema,
   addGenreSchema, querySchema}
  = require("../schemas/movies.schemas");
 
-// ruta para endpoint de movies
+// Servicios
+const MoviesServices = require("../services/movies.services");
+const service = new MoviesServices();
 
+
+// RUTAS
 router.get("/",
   validatorHandler(querySchema, 'query'),
   async (req, res, next) => {
@@ -41,6 +50,8 @@ router.get('/:id',
 })
 
 router.post('/',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(createMovieSchema, 'body'),
   async (req, res, next) => {
   try {
@@ -53,6 +64,8 @@ router.post('/',
 });
 
 router.post('/add-actor',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(addActorSchema, 'body'),
   async (req, res, next) => {
   try {
@@ -65,6 +78,8 @@ router.post('/add-actor',
 });
 
 router.post('/add-genre',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(addGenreSchema, 'body'),
   async (req, res, next) => {
   try {
@@ -81,6 +96,8 @@ router.post('/:id', async (req, res) => {
 })
 
 router.patch('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(getMovieSchema, 'params'),
   validatorHandler(updateMovieSchema, 'body'),
   async (req, res, next) => {
@@ -92,9 +109,12 @@ router.patch('/:id',
    } catch (e) {
       next(e)
     }
-  })
+  }
+);
 
- router.delete('/:id',
+router.delete('/:id',
+ passport.authenticate('jwt', {session: false}),
+ checkRole('admin'),
  validatorHandler(getMovieSchema, 'params'),
  async (req, res, next) => {
   try {

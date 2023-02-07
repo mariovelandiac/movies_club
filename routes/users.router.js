@@ -1,22 +1,35 @@
+// Vínculo con la aplicación
 const express = require("express");
 const router = express.Router();
-const UsersService = require('../services/users.services');
-const service = new UsersService();
+
+// Capa de Autenticación
+const passport = require('passport');
+const {checkRole, checkIdentity} = require('./../middlewares/auth.handler');
+
+// Capa de validación de datos de entrada
 const validatorHandler = require("../middlewares/validator.handler")
 const {createUserSchema, updateUserSchema,getUserSchema, addMovieSchema, updateMovieSchema}
  = require("../schemas/users.schemas");
 
+// Servicios
+const UsersService = require('../services/users.services');
+const service = new UsersService();
 
 
-// ruta para endpoint de actores
-
-router.get('/', async (req, res) => {
+// RUTAS
+router.get('/',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
+  async (req, res) => {
   const users = await service.find();
   res.json(users);
-})
+  }
+);
 
 // ruta para endpoint de actor/actriz en partícular
 router.get('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin', 'customer'),
   validatorHandler(getUserSchema,'params'),
   async (req, res, next) => {
     try {
@@ -42,6 +55,8 @@ router.post('/',
 });
 
 router.post('/add-movie',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin','customer'),
   validatorHandler(addMovieSchema, 'body'),
   async (req, res, next) => {
     try {
@@ -58,6 +73,8 @@ router.post('/:id', async (req, res) => {
 });
 
 router.patch('/update-movie/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin', 'customer'),
   validatorHandler(getUserSchema, 'params'),
   validatorHandler(updateMovieSchema, 'body'),
   async (req, res, next) => {
@@ -72,6 +89,9 @@ router.patch('/update-movie/:id',
 });
 
 router.patch('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin', 'customer'),
+  checkIdentity(),
   validatorHandler(getUserSchema, 'params'),
   validatorHandler(updateUserSchema, 'body'),
   async (req, res, next) => {
@@ -88,6 +108,8 @@ router.patch('/:id',
 
 
 router.delete('/delete-movie/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin', 'customer'),
   validatorHandler(getUserSchema, 'params'),
   async (req, res,next) => {
     try {
@@ -100,6 +122,9 @@ router.delete('/delete-movie/:id',
 });
 
 router.delete('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin', 'customer'),
+  checkIdentity(),
   validatorHandler(getUserSchema, 'params'),
   async (req, res,next) => {
     try {

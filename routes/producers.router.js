@@ -1,12 +1,22 @@
+// Vínculo con la aplicación
 const express = require("express");
-const ProducersServices = require('../services/producers.services')
 const router = express.Router();
-const service = new ProducersServices();
+
+// Capa de Autenticación
+const passport = require('passport');
+const {checkRole} = require('./../middlewares/auth.handler');
+
+// Capade validación de datos de ingreso
 const validatorHandler = require("../middlewares/validator.handler")
 const {createProducerSchema, updateProducerSchema,getProducerSchema}
  = require("../schemas/producers.schemas");
 
-// ruta para endpoint de productoras
+// Servicios
+const ProducersServices = require('../services/producers.services')
+const service = new ProducersServices();
+
+
+// RUTAS
 
 router.get('/', async (req,res) => {
   const producers = await service.find();
@@ -27,6 +37,8 @@ router.get('/:id',
 });
 
 router.post('/',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(createProducerSchema, 'body'),
   async (req, res, next) => {
     try {
@@ -43,6 +55,8 @@ router.post('/:id', async (req, res) => {
 })
 
 router.patch('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(getProducerSchema, 'params'),
   validatorHandler(updateProducerSchema, 'body'),
   async (req, res, next) => {
@@ -57,6 +71,8 @@ router.patch('/:id',
   })
 
 router.delete('/:id',
+  passport.authenticate('jwt', {session: false}),
+  checkRole('admin'),
   validatorHandler(getProducerSchema, 'params'),
   async (req, res, next) => {
     try {
