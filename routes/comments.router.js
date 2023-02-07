@@ -7,7 +7,7 @@ const passport = require('passport');
 const {checkRole} = require('./../middlewares/auth.handler');
 
 // Capa validación de formato de datos
-const validatorHandler = require("../middlewares/validator.handler")
+const validatorHandler = require("../middlewares/validator.handler");
 const {createCommentSchema, updateCommentSchema,getCommentSchema}= require("../schemas/comments.schemas");
 
  // Servicios
