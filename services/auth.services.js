@@ -37,6 +37,7 @@ class AuthService {
       role: user.role
     }
     const token = jwt.sign(payload, config.jwtsecret);
+    delete user.recoveryToken
     return {
       user,
       token
