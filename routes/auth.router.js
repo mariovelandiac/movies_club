@@ -13,7 +13,7 @@ const service = new AuthService();
 
 // Capa de validación de datos
 
-const {getEmailSchema} = require('./../schemas/email.schema');
+const {getEmailSchema, newPasswordSchema} = require('./../schemas/email.schema');
 const validatorHandler = require("../middlewares/validator.handler");
 
 router.post('/login',
@@ -33,13 +33,25 @@ router.post('/recovery',
   async (req, res, next) => {
     try {
       const {email} = req.body;
-      const rta = await service.sendMail(email);
+      const rta = await service.sendRecovery(email);
       res.status(200).json(rta)
 
     } catch (e) {
       next(e)
     }
-})
+});
+
+router.post('/change-password',
+  validatorHandler(newPasswordSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const {token, newPassword} = req.body;
+      const rta = await service.changePassword(token, newPassword);
+      res.status(200).json(rta)
+    } catch (e) {
+      next(e)
+    }
+});
 
 
 

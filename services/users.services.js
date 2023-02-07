@@ -17,6 +17,7 @@ class UsersService {
       password: hash
     });
     delete newUser.dataValues.password;
+    delete newUser.dataValues.recoveryToken;
     return newUser
   }
 
@@ -31,6 +32,7 @@ class UsersService {
     });
     users.forEach((user) => {
       delete user.dataValues.password
+      delete user.dataValues.recoveryToken
     })
     return users;
   }
@@ -50,6 +52,7 @@ class UsersService {
       throw boom.notFound('user not found')
     }
     delete user.dataValues.password;
+    delete user.dataValues.recoveryToken;
     return user
   }
 
