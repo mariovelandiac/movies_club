@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Capa de Autenticación
 const passport = require('passport');
-const {checkRole, checkIdentity} = require('./../middlewares/auth.handler');
+const {checkRole, checkIdentity, checkRoleCreation} = require('./../middlewares/auth.handler');
 
 // Capa de validación de datos de entrada
 const validatorHandler = require("../middlewares/validator.handler")
@@ -44,7 +44,7 @@ router.get('/:id',
 
 router.post('/',
   validatorHandler(createUserSchema, 'body'),
-  checkRole('customer'),
+  checkRoleCreation('customer'),
   async (req, res, next) => {
     try {
       const body = req.body;

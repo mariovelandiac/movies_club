@@ -22,6 +22,16 @@ function checkRole(...roles) {
   }
 }
 
+function checkRoleCreation(...roles) {
+  return function (req, res, next) {
+    const user = req.body;
+    if (roles.includes(user.role)) {
+      next()
+    } else {
+      next(boom.forbidden())
+    }
+  }
+}
 function checkIdentity() {
   return function (req, res, next) {
     const user = req.user;
@@ -34,4 +44,4 @@ function checkIdentity() {
   }
 }
 
-module.exports = {checkApiKey, checkRole, checkIdentity}
+module.exports = {checkApiKey, checkRole, checkIdentity, checkRoleCreation}
