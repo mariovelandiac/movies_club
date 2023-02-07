@@ -44,6 +44,7 @@ router.get('/:id',
 
 router.post('/',
   validatorHandler(createUserSchema, 'body'),
+  checkRole('customer'),
   async (req, res, next) => {
     try {
       const body = req.body;
