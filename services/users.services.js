@@ -11,6 +11,9 @@ class UsersService {
   }
 
   async create(data) {
+    if (data.role === 'admin') {
+      throw boom.unauthorized()
+    }
     const hash = await bcrypt.hash(data.password, 10);
     const newUser = await models.User.create({
       ...data,
