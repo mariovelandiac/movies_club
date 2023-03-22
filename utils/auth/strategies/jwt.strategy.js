@@ -1,5 +1,7 @@
 const { Strategy, ExtractJwt } = require('passport-jwt');
-const {config} = require('./../../../config/config')
+const {config} = require('./../../../config/config');
+
+
 // ExtractJWT nos permitirá extraer el token del header
 // le mandamos opciones
 const options = {

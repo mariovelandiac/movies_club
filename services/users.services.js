@@ -1,5 +1,5 @@
 const boom = require("@hapi/boom");
-const { models } = require('./../libs/sequelize')
+const { models } = require('./../libs/sequelize');
 const bcrypt = require('bcrypt');
 
 class UsersService {
@@ -42,7 +42,7 @@ class UsersService {
       where: {email: email}
     });
     return user;
-  }
+  };
 
   async findOne(id) {
     const user = await models.User.findByPk(id, {
